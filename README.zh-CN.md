@@ -134,10 +134,10 @@ mvn -f agent-kit/pom.xml test   # 78 例：循环语义 / DAG 拓扑与环拒绝
 
 ## 采用者
 
-- **[code-review-agent](https://gitee.com/13liyunfei/code-review-agent)** —— 多 Agent 协同代码审查引擎（Java 17 / Spring Boot 3.3）。以 Maven 依赖方式接入 agent-kit，落地其工具调用循环、任务拆解 DAG、LLM 评估与扩展点能力，是组件库嵌入式接入的生产级参考实现。
+- **[code-review-agent](https://gitee.com/liyunfei2030/code-review-agent)** —— 多 Agent 协同代码审查引擎（Java 17 / Spring Boot 3.3）。以 Maven 依赖方式接入 agent-kit，落地其工具调用循环、任务拆解 DAG、LLM 评估与扩展点能力，是组件库嵌入式接入的生产级参考实现。
 
 后续有新项目接入，将在此持续补充。
 
 ## License
 
-[MIT](LICENSE) © 2026 13liyunfei
+[MIT](LICENSE) © 2026 liyunfei2030
