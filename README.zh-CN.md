@@ -1,6 +1,8 @@
 # agent-kit
 
-> [English](README.md) | [中文](README.zh-CN.md)
+> [English](README.md) | [中文](README.zh-CN.md) | [📖 在线文档](https://13liyunfei.github.io/agent-kit/zh/)
+
+[![Docs](https://img.shields.io/badge/docs-github.io/agent--kit-4D1F7C)](https://13liyunfei.github.io/agent-kit/zh/)
 
 多 Agent 通用能力积木 —— 开箱即用、以 Maven 组件方式引入、扩展点自定义。
 
@@ -115,10 +117,10 @@ mvn -f agent-kit/pom.xml test   # 38 例：循环语义 / DAG 拓扑与环拒绝
 
 ## 采用者
 
-- **[code-review-agent](https://gitee.com/13liyunfei/code-review-agent)** —— 多 Agent 协同代码审查引擎（Java 17 / Spring Boot 3.3）。以 Maven 依赖方式接入 agent-kit，落地其工具调用循环、任务拆解 DAG、LLM 评估与扩展点能力，是组件库嵌入式接入的生产级参考实现。
+- **[code-review-agent](https://gitee.com/liyunfei2030/code-review-agent)** —— 多 Agent 协同代码审查引擎（Java 17 / Spring Boot 3.3）。以 Maven 依赖方式接入 agent-kit，落地其工具调用循环、任务拆解 DAG、LLM 评估与扩展点能力，是组件库嵌入式接入的生产级参考实现。
 
 后续有新项目接入，将在此持续补充。
 
 ## License
 
-[MIT](LICENSE) © 2026 13liyunfei
+[MIT](LICENSE) © 2026 liyunfei2030
