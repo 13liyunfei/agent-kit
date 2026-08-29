@@ -114,6 +114,12 @@ mvn test   # 38 cases: loop semantics / DAG topo & cycle rejection / eval aggreg
            # checkpoint restore / HITL approval / router failover / injection guard
 ```
 
+## Adopters
+
+- **[code-review-agent](https://github.com/13liyunfei/code-review-agent)** — multi-agent collaborative code review engine (Java 17 / Spring Boot 3.3). It consumes agent-kit as a Maven dependency, powering its tool-calling loop, task-decomposition DAG, LLM evaluation, and extension points; a production reference of how to embed this kit.
+
+More projects will be added here as they adopt agent-kit.
+
 ## License
 
 [MIT](LICENSE) © 2026 13liyunfei
