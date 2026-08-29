@@ -23,23 +23,29 @@
 </dependency>
 ```
 
-## 组件清单（14 组件 / 6 包）
+## 组件清单（17 包 / 14 能力域）
 
 | 包 | 组件 | 能力 |
 | --- | --- | --- |
-| `kit.toolcalling` | `AgentTool` / `ToolRegistry` / `ToolCallingLoop` / `BuiltinTools` | 工具决策循环（思考→决策→调用→观察→推理；最大迭代防死循环、非法 JSON 降级、工具异常隔离）+ 内置工具（current_time / regex_scan / file_read·防路径穿越） |
+| 包 | 组件 | 能力 |
+| --- | --- | --- |
+| `kit.model` | `OpenAiChatModel` / `OpenAiEmbeddingModel` / `NativeChatModel` / `ResilientChatModel` / `UsageStats` | 模型适配层（OpenAI 兼容：原生函数调用 / JSON mode / SSE 流式 / Embedding）+ 韧性包装（超时 / 重试退避 / 限流 / 成本指标） |
+| `kit.toolcalling` | `AgentTool` / `ToolRegistry` / `ToolCallingLoop` / `NativeToolCallingLoop` / `ToolSchema` / `GuardedTool` | 双模式工具调用：prompt-JSON 决策循环 **或** 原生 tools 协议（并行调用 + 工具结果 role）；schema 校验 + 危险模式护栏 |
+| `kit.graph` | `AgentGraph` / `AgentGraphBuilder` / `GraphState` | 状态化编排：节点 / 条件边 / 循环回边（步数守卫）/ 节点重试 / HITL 审批中断 / 检查点断点续跑 |
 | `kit.planning` | `TaskPlanner` / `TaskPlan` / `DagExecutor` | LLM 任务拆解 DAG（id 唯一/依赖存在/Kahn 无环）+ 拓扑并行执行（上游失败下游跳过） |
-| `kit.eval` | `LlmJudge` / `FindingLike` / `EvalDataset` / `EvalRunner` | precision/recall/F1 + llm-as-judge；命名基准集聚合回归（领域解耦泛型化） |
-| `kit.extension` | `ExtensionPoint` / `ExtensionRegistry` + `spi/` 5 类接口 | order 织入序/同名覆盖/线程安全；`LlmInterceptor` / `RagEnhancer` / `AgentProvider` / `MemoryStrategy` / `StageHook` |
-| `kit.session` / `kit.stream` | `ChatMessage` / `ChatSession` / `ChatStreams` | 多轮上下文窗口（条数 + token 预算裁剪）；流式工具（JDK Flow.Publisher） |
+| `kit.memory` | `ConversationMemory` / `InMemoryMemoryStrategy` / `FileMemoryStrategy` | 短期窗口 + 溢出自动摘要；可插拔长期记忆（文件 / 内存 / 自研） |
+| `kit.rag` | `RagPipeline` / `TextSplitter` / `EmbeddingModel` / `VectorStore` / `Retriever` / `RagChatModel` | RAG 全链路：切分 → 向量化 → 索引 → 检索（top-k 余弦）→ RagEnhancer 重排链 → 上下文注入对话 |
+| `kit.eval` | `LlmJudge` / `FindingLike` / `EvalDataset` / `EvalRunner` / `RagMetrics` | precision/recall/F1 + llm-as-judge + RAG 指标（上下文命中 / faithfulness / relevance）；命名基准集聚合回归 |
+| `kit.session` / `kit.stream` | `ChatMessage` / `ChatSession` / `ChatStreams` | 多轮上下文窗口（条数 + token 预算裁剪）；流式（JDK Flow.Publisher） |
 | `kit.struct` | `StructuredChatModel` | 结构化输出：JSON Schema 绑定 + 校验失败自动重试（类型安全契约） |
-| `kit.mcp` | `McpClient` / `McpTool` / `McpToolAdapter` | MCP（Model Context Protocol）客户端：stdio + JSON-RPC 2.0，接入工具生态 |
-| `kit.checkpoint` | `CheckpointStore`（内存/文件） | 检查点持久化：崩溃恢复 / 断点续跑 |
-| `kit.obs` | `GenAiSpan` / `GenAiTracer` / `TracedChatModel` | 可观测性：GenAI span / 耗时 / token / 成本指标 |
-| `kit.hitl` | `ApprovalRequest` / `ApprovalGate` | 人机协作：提交审批 → 人工裁决 → 阻塞等待（HITL） |
+| `kit.mcp` | `McpClient` / `HttpMcpClient` / `McpToolAdapter` | MCP 客户端：stdio **和** Streamable HTTP 双传输；tools / resources / prompts（JSON-RPC 2.0） |
+| `kit.checkpoint` | `CheckpointStore`（内存/文件） | 检查点持久化：崩溃恢复 / 断点续跑（也供 AgentGraph 使用） |
+| `kit.obs` | `GenAiSpan` / `GenAiTracer` / `TracedChatModel` / `AggregateTracer` | 可观测性：GenAI span / 耗时 / token / 成本，聚合指标导出（MetricsSink） |
+| `kit.hitl` | `ApprovalRequest` / `ApprovalGate` | 人机协作：提交审批 → 人工裁决 → 阻塞等待（亦可作为图的中断点） |
 | `kit.router` | `ModelRouter` / `RoutingChatModel` | 多模型路由（优先级）+ 调用失败自动 failover |
-| `kit.security` | `PromptInjectionDetector` / `InjectionGuardInterceptor` | Prompt 注入防护（高/低风险），以 LlmInterceptor SPI 方式接入 |
-
+| `kit.security` | `PromptInjectionDetector` / `SensitiveDataGuard` / `OutputGuardInterceptor` / `ToolSchemaValidator` | Prompt 注入检测 + 敏感数据脱敏（输出护栏）+ 工具参数校验，以 LlmInterceptor SPI 方式接入 |
+| `kit.agent` | `Agent` / `AgentRuntime` / `SupervisorAgent` | 多 Agent 协作：Agent 间 Handoff 转交协议 + LLM 驱动 Supervisor 路由派发 |
+| `kit.extension` | `ExtensionRegistry` + 5 类 SPI | order 织入序/同名覆盖/线程安全；`LlmInterceptor` / `RagEnhancer` / `AgentProvider` / `MemoryStrategy` / `StageHook` |
 ## 唯一模型边界：ChatModel
 
 kit 不依赖任何具体 LLM 供应商，只认一个接口：
@@ -107,10 +113,21 @@ LlmJudge<MyFinding> judge = new LlmJudge<>(model);
 EvalReport report = new EvalRunner().run(dataset, case -> produceFindings(case));
 ```
 
+## 本次新增能力
+
+- **原生函数调用** — `NativeChatModel` + `NativeToolCallingLoop`：走供应商原生 `tools` 协议的并行工具调用 + 工具结果 role 消息；不支持时自动回退 prompt-JSON 模式。
+- **状态化编排** — `AgentGraph`：条件边、循环回边（步数守卫）、节点级重试、HITL 审批中断、检查点断点续跑。
+- **记忆 + RAG** — `ConversationMemory`（溢出自动摘要）、文件/内存 `MemoryStrategy`、RAG 全链路（`TextSplitter` / `EmbeddingModel` / `VectorStore` / `Retriever` / `RagChatModel`）。
+- **生产工程化** — `ResilientChatModel`（超时 / 重试退避 / 限流）、`UsageStats` + `MetricsSink` 成本核算；OpenAI 兼容适配器基于 JDK `HttpClient` 实现（零新增依赖）。
+- **MCP Streamable HTTP** — `HttpMcpClient` 支持远程 MCP 服务器（JSON + SSE），两个传输均补齐 `resources` / `prompts` 方法。
+- **安全与评测** — 敏感数据脱敏输出护栏、工具调用参数校验、RAG 评测指标。
+- **多 Agent 运行时** — `Agent` / `AgentRuntime` 的 Handoff 转交协议与 `SupervisorAgent` 路由派发。
+
+
 ## 测试
 
 ```bash
-mvn -f agent-kit/pom.xml test   # 38 例：循环语义 / DAG 拓扑与环拒绝 / 评估聚合 / 扩展点织入 /
+mvn -f agent-kit/pom.xml test   # 78 例：循环语义 / DAG 拓扑与环拒绝 / 评估聚合 / 扩展点织入 /
                                 # 会话裁剪 / 结构化重试 / MCP 全链路 / 检查点恢复 / HITL 审批 /
                                 # 路由 failover / 注入防护
 ```

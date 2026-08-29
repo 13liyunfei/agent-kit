@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * 结构化输出（类型安全契约 + 自动校验重试）。
  *
- * <p>对标 Pydantic AI / OpenAI structured outputs：使用方声明 JSON Schema 约束，
+ * <p>使用方声明 JSON Schema 约束（structured outputs 形态），
  * 模型输出经反序列化校验，失败自动重试（最多 {@code maxRetries} 次），
  * 返回强类型对象——消除手写 JSON 解析的脆弱性。
  */

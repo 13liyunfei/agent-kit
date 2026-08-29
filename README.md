@@ -22,23 +22,29 @@ Build & test: see [BUILD.md](BUILD.md).
 
 ![agent-kit layered architecture](docs/architecture-en.svg)
 
-## Components (14 components / 12 capability areas)
+## Components (17 packages / 14 capability areas)
 
 | Package | Components | Capability |
 | --- | --- | --- |
-| `kit.toolcalling` | `AgentTool` / `ToolRegistry` / `ToolCallingLoop` / `BuiltinTools` | Tool-calling decision loop (think → decide → call → observe → reason; max-iteration guard, illegal-JSON fallback, tool-error isolation) + built-ins (`current_time` / `regex_scan` / `file_read` with path-traversal guard) |
-| `kit.planning` | `TaskPlanner` / `TaskPlan` / `DagExecutor` | LLM task decomposition into a dependency DAG (id-unique / dep-exists / Kahn acyclic) + topo-parallel execution (upstream failure skips downstream) |
-| `kit.eval` | `LlmJudge` / `FindingLike` / `EvalDataset` / `EvalRunner` | Ground-truth precision/recall/F1 + llm-as-judge; named dataset regression (domain-decoupled via `FindingLike`) |
-| `kit.extension` | `ExtensionPoint` / `ExtensionRegistry` + `spi/` 5 interfaces | Order-based weaving, same-name override, thread-safe; `LlmInterceptor` / `RagEnhancer` / `AgentProvider` / `MemoryStrategy` / `StageHook` |
-| `kit.session` / `kit.stream` | `ChatMessage` / `ChatSession` / `ChatStreams` | Multi-turn context window (message-count + token-budget trimming); streaming utilities (JDK Flow.Publisher) |
-| `kit.struct` | `StructuredChatModel` | Structured output: JSON Schema binding + validation with automatic retry |
-| `kit.mcp` | `McpClient` / `McpTool` / `McpToolAdapter` | MCP (Model Context Protocol) client: stdio + JSON-RPC 2.0, connect to the tool ecosystem |
-| `kit.checkpoint` | `CheckpointStore` (in-memory / file) | Checkpoint persistence: crash recovery / resume |
-| `kit.obs` | `GenAiSpan` / `GenAiTracer` / `TracedChatModel` | Observability: GenAI spans / latency / tokens / cost |
-| `kit.hitl` | `ApprovalRequest` / `ApprovalGate` | Human-in-the-loop: submit approval → human decision → blocking await |
+| 包 | 组件 | 能力 |
+| --- | --- | --- |
+| `kit.model` | `OpenAiChatModel` / `OpenAiEmbeddingModel` / `NativeChatModel` / `ResilientChatModel` / `UsageStats` | Model adapters (OpenAI-compatible: native function calling / JSON mode / SSE streaming / embeddings) + resilience wrapper (timeout / retry-backoff / rate limit / cost metrics) |
+| `kit.toolcalling` | `AgentTool` / `ToolRegistry` / `ToolCallingLoop` / `NativeToolCallingLoop` / `ToolSchema` / `GuardedTool` | Dual-mode tool calling: prompt-JSON decision loop **or** native `tools` protocol with parallel calls & tool-role messages; schema validation + dangerous-pattern guard |
+| `kit.graph` | `AgentGraph` / `AgentGraphBuilder` / `GraphState` | Stateful orchestration: nodes / conditional edges / loop-back cycles (budget-guarded) / per-node retry / HITL approval interrupt / checkpoint resume |
+| `kit.planning` | `TaskPlanner` / `TaskPlan` / `DagExecutor` | LLM task decomposition into a dependency DAG (id-unique / dep-exists / acyclic) + topo-parallel execution (upstream failure skips downstream) |
+| `kit.memory` | `ConversationMemory` / `InMemoryMemoryStrategy` / `FileMemoryStrategy` | Short-term window + overflow auto-summarization; pluggable long-term memory (file / in-memory / your own) |
+| `kit.rag` | `RagPipeline` / `TextSplitter` / `EmbeddingModel` / `VectorStore` / `Retriever` / `RagChatModel` | Full RAG loop: chunk → embed → index → retrieve (top-k, cosine) → `RagEnhancer` rerank chain → context-injected chat |
+| `kit.eval` | `LlmJudge` / `FindingLike` / `EvalDataset` / `EvalRunner` / `RagMetrics` | Ground-truth precision/recall/F1 + llm-as-judge + RAG metrics (context hit / faithfulness / relevance); named dataset regression |
+| `kit.session` / `kit.stream` | `ChatMessage` / `ChatSession` / `ChatStreams` | Multi-turn context window (count + token budget trimming); streaming (JDK Flow.Publisher) |
+| `kit.struct` | `StructuredChatModel` | Structured output: JSON Schema binding + validation-failure auto-retry (type-safe contract) |
+| `kit.mcp` | `McpClient` / `HttpMcpClient` / `McpToolAdapter` | MCP client: stdio **and** Streamable HTTP transports; tools / resources / prompts (JSON-RPC 2.0) |
+| `kit.checkpoint` | `CheckpointStore` (memory/file) | Checkpoint persistence: crash recovery / resume (also used by `AgentGraph`) |
+| `kit.obs` | `GenAiSpan` / `GenAiTracer` / `TracedChatModel` / `AggregateTracer` | Observability: GenAI spans / latency / tokens / cost, aggregated metrics export (`MetricsSink`) |
+| `kit.hitl` | `ApprovalRequest` / `ApprovalGate` | Human-in-the-loop: submit approval → human decision → blocking await (also as graph interrupt) |
 | `kit.router` | `ModelRouter` / `RoutingChatModel` | Multi-model routing (priority) + automatic failover |
-| `kit.security` | `PromptInjectionDetector` / `InjectionGuardInterceptor` | Prompt-injection defense (high/low risk), wired in as a `LlmInterceptor` SPI example |
-
+| `kit.security` | `PromptInjectionDetector` / `SensitiveDataGuard` / `OutputGuardInterceptor` / `ToolSchemaValidator` | Prompt-injection detection + PII redaction (output guardrail) + tool-call argument guard, wired as `LlmInterceptor` SPI |
+| `kit.agent` | `Agent` / `AgentRuntime` / `SupervisorAgent` | Multi-agent collaboration: handoff protocol between agents + LLM-driven supervisor routing |
+| `kit.extension` | `ExtensionRegistry` + 5 SPI interfaces | order-woven extension chain (thread-safe, same-name override): `LlmInterceptor` / `RagEnhancer` / `AgentProvider` / `MemoryStrategy` / `StageHook` |
 ## Model boundary: `ChatModel`
 
 kit does not depend on any specific LLM vendor — a single interface is the only model boundary:
@@ -108,10 +114,21 @@ LlmJudge<MyFinding> judge = new LlmJudge<>(model);
 EvalReport report = new EvalRunner().run(dataset, case -> produceFindings(case));
 ```
 
+## New capabilities added
+
+- **Native function calling** — `NativeChatModel` + `NativeToolCallingLoop`: parallel tool calls over the provider-native `tools` protocol with tool-role messages; auto-fallback to prompt-JSON mode.
+- **Stateful orchestration** — `AgentGraph`: conditional edges, loop-back cycles with budgets, per-node retry, HITL approval interrupts, checkpoint resume.
+- **Memory + RAG** — `ConversationMemory` (overflow summarization), file/in-memory `MemoryStrategy`, and a full RAG pipeline (`TextSplitter` / `EmbeddingModel` / `VectorStore` / `Retriever` / `RagChatModel`).
+- **Production engineering** — `ResilientChatModel` (timeout / retry-backoff / rate limit), `UsageStats` + `MetricsSink` cost accounting, OpenAI-compatible adapters via JDK `HttpClient` (zero new dependencies).
+- **MCP Streamable HTTP** — `HttpMcpClient` for remote MCP servers (JSON + SSE), plus `resources` / `prompts` methods on both transports.
+- **Security & eval** — PII redaction output guardrail, tool-call argument guard, RAG evaluation metrics.
+- **Multi-agent runtime** — `Agent` / `AgentRuntime` handoffs and `SupervisorAgent` routing.
+
+
 ## Testing
 
 ```bash
-mvn test   # 38 cases: loop semantics / DAG topo & cycle rejection / eval aggregation /
+mvn test   # 78 cases: loop semantics / DAG topo & cycle rejection / eval aggregation /
            # extension weaving / session trimming / structured retry / MCP full chain /
            # checkpoint restore / HITL approval / router failover / injection guard
 ```

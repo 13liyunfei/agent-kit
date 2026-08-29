@@ -136,4 +136,45 @@ public class McpClient implements Closeable {
             process.destroy();
         }
     }
+
+
+    /** 列出可用资源（resources/list）。 */
+    public List<McpResource> listResources() throws IOException {
+        long id = idSeq.getAndIncrement();
+        send(Map.of("jsonrpc", "2.0", "id", id, "method", "resources/list", "params", Map.of()));
+        JsonNode resp = readResponse(id);
+        List<McpResource> out = new ArrayList<>();
+        for (JsonNode r : resp.path("result").path("resources")) {
+            out.add(new McpResource(r.path("uri").asText(), r.path("name").asText(),
+                    r.path("description").asText(null), r.path("mimeType").asText(null)));
+        }
+        return out;
+    }
+
+    /** 读取资源内容（resources/read）。 */
+    public String readResource(String uri) throws IOException {
+        long id = idSeq.getAndIncrement();
+        send(Map.of("jsonrpc", "2.0", "id", id, "method", "resources/read",
+                "params", Map.of("uri", uri)));
+        JsonNode resp = readResponse(id);
+        StringBuilder sb = new StringBuilder();
+        for (JsonNode c : resp.path("result").path("contents")) {
+            if (c.hasNonNull("text")) {
+                sb.append(c.path("text").asText());
+            }
+        }
+        return sb.toString();
+    }
+
+    /** 列出可用 prompts（prompts/list）。 */
+    public List<McpPrompt> listPrompts() throws IOException {
+        long id = idSeq.getAndIncrement();
+        send(Map.of("jsonrpc", "2.0", "id", id, "method", "prompts/list", "params", Map.of()));
+        JsonNode resp = readResponse(id);
+        List<McpPrompt> out = new ArrayList<>();
+        for (JsonNode p : resp.path("result").path("prompts")) {
+            out.add(new McpPrompt(p.path("name").asText(), p.path("description").asText(null)));
+        }
+        return out;
+    }
 }
