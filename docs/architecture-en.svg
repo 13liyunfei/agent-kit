@@ -1,0 +1,82 @@
+<svg viewBox="0 0 680 640" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI',system-ui,sans-serif">
+  <title>agent-kit — Layered Architecture (static structure)</title>
+  <desc>Three layers: consumer project (adaptation &amp; extension), agent-kit capability components (execution loop / quality &amp; governance / foundation &amp; security), infrastructure; ChatModel is the only model boundary.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <style>
+    text{font-family:'Segoe UI',system-ui,sans-serif}
+    .th{font-size:13px;font-weight:500;fill:#2C2C2A}
+    .ts{font-size:11px;fill:#5F5E5A}
+    .cap{font-size:11px;fill:#888780}
+    .lay{font-size:14px;font-weight:600}
+  </style>
+
+  <text class="th" x="40" y="28" font-size="15">agent-kit — Layered Architecture (static structure)</text>
+  <text class="ts" x="40" y="46">Embedded multi-agent capability library · three layers + single model boundary · pure Java 17, framework-free</text>
+
+  <!-- LAYER 1 CONSUMER -->
+  <rect x="40" y="60" width="600" height="86" rx="14" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text class="lay" x="56" y="80" fill="#0C447C">① Consumer project (adaptation &amp; extension)</text>
+  <rect x="58" y="92" width="135" height="42" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text class="ts" x="125" y="106" text-anchor="middle" dominant-baseline="central">ChatModel</text>
+  <text class="ts" x="125" y="122" text-anchor="middle" dominant-baseline="central">one-line LLM adapter</text>
+  <rect x="205" y="92" width="135" height="42" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text class="ts" x="272" y="106" text-anchor="middle" dominant-baseline="central">FindingLike</text>
+  <text class="ts" x="272" y="122" text-anchor="middle" dominant-baseline="central">domain findings for eval</text>
+  <rect x="352" y="92" width="135" height="42" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text class="ts" x="419" y="106" text-anchor="middle" dominant-baseline="central">SPI registration</text>
+  <text class="ts" x="419" y="122" text-anchor="middle" dominant-baseline="central">layer custom behavior</text>
+  <rect x="499" y="92" width="125" height="42" rx="8" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <text class="ts" x="561" y="106" text-anchor="middle" dominant-baseline="central">Orchestration</text>
+  <text class="ts" x="561" y="122" text-anchor="middle" dominant-baseline="central">compose components</text>
+  <path class="a" d="M340 146 L340 158" stroke="#185FA5"/>
+
+  <!-- MODEL BOUNDARY -->
+  <text class="cap" x="40" y="156" fill="#993C1D">ChatModel.chat(String) / stream() — the only model boundary</text>
+
+  <!-- LAYER 2 KIT CAPABILITIES -->
+  <rect x="40" y="168" width="600" height="330" rx="14" fill="#EAF3DE" stroke="#639922" stroke-width="0.5"/>
+  <text class="lay" x="56" y="188" fill="#3B6D11">② agent-kit capability components (14 components / 6 packages)</text>
+  <rect x="58" y="198" width="280" height="130" rx="10" fill="#EAF3DE" stroke="#639922" stroke-width="0.5"/>
+  <text class="th" x="74" y="216" fill="#27500A">Execution loop</text>
+  <text class="ts" x="74" y="234">• toolcalling: ToolCallingLoop decision loop</text>
+  <text class="ts" x="74" y="252">• mcp: McpClient tool-ecosystem access</text>
+  <text class="ts" x="74" y="270">• planning: TaskPlanner → DagExecutor</text>
+  <text class="ts" x="74" y="288">• session/stream: multi-turn · streaming</text>
+  <rect x="352" y="198" width="280" height="130" rx="10" fill="#EAF3DE" stroke="#639922" stroke-width="0.5"/>
+  <text class="th" x="368" y="216" fill="#27500A">Quality &amp; governance</text>
+  <text class="ts" x="368" y="234">• eval: LlmJudge + EvalDataset regression</text>
+  <text class="ts" x="368" y="252">• obs: GenAiTracer observability / cost</text>
+  <text class="ts" x="368" y="270">• checkpoint: persistence · resume</text>
+  <text class="ts" x="368" y="288">• hitl: ApprovalGate human approval</text>
+  <rect x="58" y="340" width="280" height="142" rx="10" fill="#FDF6E3" stroke="#BA7517" stroke-width="0.8"/>
+  <text class="th" x="74" y="358" fill="#854F0B">Foundation &amp; security</text>
+  <text class="ts" x="74" y="376">• extension: ExtensionRegistry + 5 SPIs</text>
+  <text class="ts" x="74" y="394">• router: ModelRouter routing · failover</text>
+  <text class="ts" x="74" y="412">• struct: StructuredChatModel output</text>
+  <text class="ts" x="74" y="430">• security: injection detection · guard</text>
+  <rect x="352" y="340" width="280" height="142" rx="10" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.8"/>
+  <text class="th" x="368" y="358" fill="#854F0B">Extension SPI (5 contracts)</text>
+  <text class="ts" x="368" y="376">• LlmInterceptor: pre/post LLM call</text>
+  <text class="ts" x="368" y="394">• RagEnhancer: retrieval enhancement</text>
+  <text class="ts" x="368" y="412">• AgentProvider: domain agents</text>
+  <text class="ts" x="368" y="430">• MemoryStrategy / StageHook</text>
+  <path class="a" d="M340 498 L340 512" stroke="#639922"/>
+
+  <!-- LAYER 3 INFRA -->
+  <rect x="40" y="512" width="600" height="88" rx="14" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+  <text class="lay" x="56" y="532" fill="#444441">③ Infrastructure</text>
+  <rect x="58" y="542" width="135" height="44" rx="8" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+  <text class="th" x="125" y="564" text-anchor="middle" dominant-baseline="central">JDK 17</text>
+  <rect x="205" y="542" width="135" height="44" rx="8" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+  <text class="th" x="272" y="564" text-anchor="middle" dominant-baseline="central">jackson-databind</text>
+  <rect x="352" y="542" width="135" height="44" rx="8" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+  <text class="th" x="419" y="564" text-anchor="middle" dominant-baseline="central">slf4j</text>
+  <rect x="499" y="542" width="125" height="44" rx="8" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+  <text class="th" x="561" y="564" text-anchor="middle" dominant-baseline="central">consumer storage</text>
+
+  <text class="cap" x="40" y="618">Components cooperate via plain Java APIs (no Spring / no runtime). Consumers integrate through the ChatModel boundary + SPI extension points; any multi-agent project can reuse them directly.</text>
+</svg>
