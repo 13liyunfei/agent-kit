@@ -17,14 +17,14 @@ mvn test
 # 打 jar 包（产出 target/agent-kit-0.1.0.jar）
 mvn package
 
-# 安装到本地 Maven 仓库（~/.m2/repository/com/codereview/agent-kit/0.1.0/）
+# 安装到本地 Maven 仓库（~/.m2/repository/io/github/liyunfei/agent-kit/0.1.0/）
 mvn install
 
 # 跳过测试快速打包
 mvn package -DskipTests
 ```
 
-> 使用方项目在 pom.xml 引入 `com.codereview:agent-kit:0.1.0` 前，需先执行 `mvn install` 把构件装入本地仓库（或配置私有仓库地址）。
+> 使用方项目在 pom.xml 引入 `io.github.liyunfei:agent-kit:0.1.0` 前，需先执行 `mvn install` 把构件装入本地仓库（或配置私有仓库地址）。
 
 ## 版本约定
 

@@ -10,7 +10,7 @@ Pure Java 17, framework-free (only jackson-databind + slf4j). Any multi-agent pr
 
 ```xml
 <dependency>
-    <groupId>com.codereview</groupId>
+    <groupId>io.github.liyunfei</groupId>
     <artifactId>agent-kit</artifactId>
     <version>0.1.0</version>
 </dependency>

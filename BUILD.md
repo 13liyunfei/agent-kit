@@ -17,14 +17,14 @@ mvn test
 # Package jar (target/agent-kit-0.1.0.jar)
 mvn package
 
-# Install to local Maven repo (~/.m2/repository/com/codereview/agent-kit/0.1.0/)
+# Install to local Maven repo (~/.m2/repository/io/github/liyunfei/agent-kit/0.1.0/)
 mvn install
 
 # Fast package without tests
 mvn package -DskipTests
 ```
 
-> Consumers must run `mvn install` first (or configure a private repository) before depending on `com.codereview:agent-kit:0.1.0` in their `pom.xml`.
+> Consumers must run `mvn install` first (or configure a private repository) before depending on `io.github.liyunfei:agent-kit:0.1.0` in their `pom.xml`.
 
 ## Versioning
 
