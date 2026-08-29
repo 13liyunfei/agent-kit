@@ -3,3 +3,8 @@ target/
 .idea/
 *.iml
 .DS_Store
+
+# VitePress docs site build artifacts
+site/node_modules/
+site/.vitepress/dist/
+site/.vitepress/cache/
