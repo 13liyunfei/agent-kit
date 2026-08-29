@@ -1,6 +1,8 @@
 # agent-kit
 
-> [English](README.md) | [中文](README.zh-CN.md)
+> [English](README.md) | [中文](README.zh-CN.md) | [📖 在线文档](https://13liyunfei.github.io/agent-kit/zh/)
+
+[![Docs](https://img.shields.io/badge/docs-github.io/agent--kit-4D1F7C)](https://13liyunfei.github.io/agent-kit/zh/)
 
 多 Agent 通用能力积木 —— 开箱即用、以 Maven 组件方式引入、扩展点自定义。
 

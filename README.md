@@ -1,6 +1,8 @@
 # agent-kit
 
-> [English](README.md) | [中文](README.zh-CN.md)
+> [English](README.md) | [中文](README.zh-CN.md) | [📖 Documentation](https://13liyunfei.github.io/agent-kit/)
+
+[![Docs](https://img.shields.io/badge/docs-github.io/agent--kit-4D1F7C)](https://13liyunfei.github.io/agent-kit/)
 
 Reusable multi-agent capability kit — plug in as a Maven component, extend via SPI.
 
