@@ -115,6 +115,7 @@ EvalReport report = new EvalRunner().run(dataset, case -> produceFindings(case))
 
 ## 本次新增能力
 
+- **0.1.1 结构化输出与调用追踪** —— `StructuredChatModel` 通过 Jackson 内省从 POJO 自动推导 JSON Schema（无需手写 schema），解析失败返回 `StructuredResult<T>` 而非抛异常；`GenAiSpan` 支持携带 traceId / model / error 并提供流式 builder，`TracedChatModel` 补齐流式与失败留痕，`AggregateTracer` 把 span 聚合成按操作维度的指标（调用数 / 错误数 / token / 耗时 / 成本）。
 - **原生函数调用** — `NativeChatModel` + `NativeToolCallingLoop`：走供应商原生 `tools` 协议的并行工具调用 + 工具结果 role 消息；不支持时自动回退 prompt-JSON 模式。
 - **状态化编排** — `AgentGraph`：条件边、循环回边（步数守卫）、节点级重试、HITL 审批中断、检查点断点续跑。
 - **记忆 + RAG** — `ConversationMemory`（溢出自动摘要）、文件/内存 `MemoryStrategy`、RAG 全链路（`TextSplitter` / `EmbeddingModel` / `VectorStore` / `Retriever` / `RagChatModel`）。
@@ -128,16 +129,20 @@ EvalReport report = new EvalRunner().run(dataset, case -> produceFindings(case))
 
 ```bash
 mvn test   # 103 例：循环语义 / DAG 拓扑与环拒绝 / 评估聚合 / 扩展点织入 /
-                                # 会话裁剪 / 结构化重试 / MCP 全链路 / 检查点恢复 / HITL 审批 /
-                                # 路由 failover / 注入防护
+           # 会话裁剪 / 结构化重试（类型推导 schema）/ MCP 全链路 / 检查点恢复 /
+           # HITL 审批 / 路由 failover / 注入防护 / 追踪 span（traceId / 失败留痕 / 流式）
 ```
 
 ## 采用者
 
-- **[code-review-agent](https://gitee.com/liyunfei2030/code-review-agent)** —— 多 Agent 协同代码审查引擎（Java 17 / Spring Boot 3.3）。以 Maven 依赖方式接入 agent-kit，落地其工具调用循环、任务拆解 DAG、LLM 评估与扩展点能力，是组件库嵌入式接入的生产级参考实现。
+- **[code-review-agent](https://gitee.com/liyunfei2030/code-review-agent)** —— 多 Agent 协同代码审查引擎（Java 17 / Spring Boot 3.3），也是 agent-kit 的**第一个生产级使用方**。
+
+  agent-kit 最初正是从这个项目**抽取**出来的，随后该项目又反向依赖回 agent-kit —— 所以包名至今仍是 `com.codereview.kit`。它采纳了 **17 个能力包中的 8 个**，其中包含两处接口级锚点：模型边界（`LlmClient extends com.codereview.kit.ChatModel`）与核心领域类型（`Finding implements com.codereview.kit.eval.FindingLike`）。其余 9 个是**明确不采纳**，且每条都写清了理由 —— 可 grep 验证的对照表见其 [`docs/agent-kit-adoption.md`](https://gitee.com/liyunfei2030/code-review-agent/blob/main/docs/agent-kit-adoption.md)。
+
+  如果你正在评估这个库，有一点值得知道：**有两个包是因为这个使用方才升级的。** `struct` 补上了类型推导 schema 与非抛异常结果，`obs` 补上了携带 traceId 的 span、失败/流式留痕和按操作维度的指标 —— 两次都是下游已有更强的实现，而正确的做法是把差距在基座侧补平，而不是写一份"为什么不用"的说明。
 
 后续有新项目接入，将在此持续补充。
 
 ## License
 
-[MIT](LICENSE) © 2026 liyunfei2030
+[MIT](LICENSE) © 2026 13liyunfei

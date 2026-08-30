@@ -116,6 +116,7 @@ EvalReport report = new EvalRunner().run(dataset, case -> produceFindings(case))
 
 ## New capabilities added
 
+- **0.1.1 — structured output & tracing** — `StructuredChatModel` derives the JSON Schema from your POJO via Jackson introspection (no hand-written schema) and returns `StructuredResult<T>` instead of throwing on parse failure; `GenAiSpan` carries traceId / model / error with a fluent builder, `TracedChatModel` records streaming and failures, and `AggregateTracer` rolls spans into per-operation metrics (calls / errors / tokens / latency / cost).
 - **Native function calling** — `NativeChatModel` + `NativeToolCallingLoop`: parallel tool calls over the provider-native `tools` protocol with tool-role messages; auto-fallback to prompt-JSON mode.
 - **Stateful orchestration** — `AgentGraph`: conditional edges, loop-back cycles with budgets, per-node retry, HITL approval interrupts, checkpoint resume.
 - **Memory + RAG** — `ConversationMemory` (overflow summarization), file/in-memory `MemoryStrategy`, and a full RAG pipeline (`TextSplitter` / `EmbeddingModel` / `VectorStore` / `Retriever` / `RagChatModel`).
@@ -129,16 +130,21 @@ EvalReport report = new EvalRunner().run(dataset, case -> produceFindings(case))
 
 ```bash
 mvn test   # 103 cases: loop semantics / DAG topo & cycle rejection / eval aggregation /
-           # extension weaving / session trimming / structured retry / MCP full chain /
-           # checkpoint restore / HITL approval / router failover / injection guard
+           # extension weaving / session trimming / structured retry (type-derived schema) /
+           # MCP full chain / checkpoint restore / HITL approval / router failover /
+           # injection guard / tracing spans (traceId, failure & streaming recorded)
 ```
 
 ## Adopters
 
-- **[code-review-agent](https://gitee.com/liyunfei2030/code-review-agent)** — multi-agent collaborative code review engine (Java 17 / Spring Boot 3.3). It consumes agent-kit as a Maven dependency, powering its tool-calling loop, task-decomposition DAG, LLM evaluation, and extension points; a production reference of how to embed this kit.
+- **[code-review-agent](https://github.com/13liyunfei/code-review-agent)** — multi-agent collaborative code review engine (Java 17 / Spring Boot 3.3), and the kit's **first production consumer**.
+
+  agent-kit was originally extracted *from* that project, which then came to depend back on it — which is why the package root is still `com.codereview.kit`. It adopts **8 of the 17 capability packages**, including two interface-level anchors: its model boundary (`LlmClient extends com.codereview.kit.ChatModel`) and its core domain type (`Finding implements com.codereview.kit.eval.FindingLike`). The remaining 9 are deliberately *not* adopted, each with a stated reason — see its [`docs/agent-kit-adoption.md`](https://github.com/13liyunfei/code-review-agent/blob/main/docs/agent-kit-adoption.md) for the grep-verifiable map.
+
+  Worth knowing if you are evaluating this kit: **two packages were upgraded because of that consumer.** `struct` gained type-derived schemas and non-throwing results, and `obs` gained traceId-carrying spans, failure/streaming recording and per-operation metrics — in both cases the downstream project already had something stronger, and the fix was to close the gap in the kit rather than write up a reason for not using it.
 
 More projects will be added here as they adopt agent-kit.
 
 ## License
 
-[MIT](LICENSE) © 2026 liyunfei2030
+[MIT](LICENSE) © 2026 13liyunfei
