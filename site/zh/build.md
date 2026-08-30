@@ -8,7 +8,7 @@
 ## 常用命令
 
 ```bash
-mvn test                 # 跑全量测试（38 例）
+mvn test                 # 跑全量测试（103 例）
 mvn package              # 构建 jar
 mvn install              # 安装到本地仓库
 ```

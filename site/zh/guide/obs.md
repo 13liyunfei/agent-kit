@@ -15,11 +15,51 @@ traced.chat("...");   // span 自动记录
 ChatModel model = new TracedChatModel(new RoutingChatModel(router), tracer);
 ```
 
-需要给包装器覆盖不到的环节计时时，也可以手动记录：
+### 带上链路 id
+
+多 Agent 系统会跨线程扇出，span 需要有个东西把它归回"是哪次请求引起的"。基座刻意**不自带**链路上下文——id 的生成与传播（MDC、线程池、父子线程恢复）是使用方的关注点，你只需把已有的 id 交出来：
 
 ```java
-GenAiSpan span = tracer.start("planning");
-try { plan(); } finally { span.end(); }
+TracedChatModel traced = new TracedChatModel(
+        model, tracer, TraceContext::getTraceId, "qwen-plus");
+```
+
+### 失败同样留痕
+
+抛异常的调用会被记录成一个带 `error` 的 span，然后原样抛出。0.1.0 的行为是**失败时完全不记录**——恰恰漏掉了最该被看见的那些调用。
+
+```java
+try {
+    traced.chat("...");
+} catch (RuntimeException e) {
+    tracer.spans();  // 最后一个 failed() == true，error 为失败原因
+}
+```
+
+流式调用同样被观测：`stream()` 整条流记一个 span，流中断时记录错误。
+
+### 聚合成指标
+
+```java
+AggregateTracer agg = new AggregateTracer();
+GenAiTracer tracer = GenAiTracer.composite(agg, new LoggingGenAiTracer());
+
+AggregateTracer.Stats stats = agg.snapshot();
+stats.calls();            // 调用次数
+stats.errors();           // 失败次数
+stats.errorRate();        // 0~1
+stats.inputTokens();      // 输入 token
+stats.outputTokens();     // 输出 token
+stats.avgLatencyMs();     // 平均耗时
+agg.byOperation();        // 按操作名分组的同样指标
+agg.reset();              // 按"每次运行"重新计数
+```
+
+也可以给包装器覆盖不到的环节计时：
+
+```java
+GenAiSpan span = tracer.record("planning", this::plan);          // 无返回值
+Plan plan = tracer.trace("planning", this::plan);                // 有返回值
 ```
 
 ## 模型路由

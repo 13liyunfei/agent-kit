@@ -93,6 +93,12 @@ public class ResilientChatModel implements ChatModel {
             return r;
         } catch (RuntimeException e) {
             stats.recordFailure();
+            if (tracer != null) {
+                tracer.record(GenAiSpan.builder("llm.chat")
+                        .durationMs(System.currentTimeMillis() - start)
+                        .error(e)
+                        .build());
+            }
             throw e;
         }
     }

@@ -34,5 +34,5 @@ features:
     details: LlmInterceptor, RagEnhancer, AgentProvider, MemoryStrategy, StageHook — register your own behaviour and override defaults.
   - icon: 📦
     title: On Maven Central
-    details: io.github.13liyunfei:agent-kit:0.1.0 — signed, with sources and javadoc. No private repository required.
+    details: io.github.13liyunfei:agent-kit:0.1.1 — signed, with sources and javadoc. No private repository required.
 ---

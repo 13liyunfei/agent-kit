@@ -11,24 +11,24 @@
 ## Build commands
 
 ```bash
-# Unit tests (38 cases, offline-capable)
+# Unit tests (103 cases, offline-capable)
 mvn test
 
-# Package jar (target/agent-kit-0.1.0.jar)
+# Package jar (target/agent-kit-0.1.1.jar)
 mvn package
 
-# Install to local Maven repo (~/.m2/repository/io/github/13liyunfei/agent-kit/0.1.0/)
+# Install to local Maven repo (~/.m2/repository/io/github/13liyunfei/agent-kit/0.1.1/)
 mvn install
 
 # Fast package without tests
 mvn package -DskipTests
 ```
 
-> Consumers must run `mvn install` first (or configure a private repository) before depending on `io.github.13liyunfei:agent-kit:0.1.0` in their `pom.xml`.
+> Consumers must run `mvn install` first (or configure a private repository) before depending on `io.github.13liyunfei:agent-kit:0.1.1` in their `pom.xml`.
 
 ## Versioning
 
-- Current version: `0.1.0` (first reusable milestone)
+- Current version: `0.1.1` (structured output + tracing enhancements)
 - Version is declared in `<version>` of `pom.xml`; when releasing, keep in sync:
   - The dependency snippets in `README.md` (English) and `README.zh-CN.md` (Chinese)
   - The component tables in both READMEs if the component list changes
@@ -55,7 +55,7 @@ mvn deploy   # requires repository credentials in settings.xml
 
 ## Pre-commit checklist
 
-- [ ] `mvn test` all green (38 cases)
+- [ ] `mvn test` all green (103 cases)
 - [ ] New components registered in the component tables of `README.md` (English) and `README.zh-CN.md` (Chinese)
 - [ ] New SPI extension points registered in the extension-point tables of both READMEs
 - [ ] Packages follow `com.codereview.kit.*`; only JDK / jackson / slf4j dependencies

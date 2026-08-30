@@ -14,7 +14,7 @@ Pure Java 17, framework-free (only jackson-databind + slf4j). Any multi-agent pr
 <dependency>
     <groupId>io.github.13liyunfei</groupId>
     <artifactId>agent-kit</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
@@ -36,10 +36,10 @@ Build & test: see [BUILD.md](BUILD.md).
 | `kit.rag` | `RagPipeline` / `TextSplitter` / `EmbeddingModel` / `VectorStore` / `Retriever` / `RagChatModel` | Full RAG loop: chunk → embed → index → retrieve (top-k, cosine) → `RagEnhancer` rerank chain → context-injected chat |
 | `kit.eval` | `LlmJudge` / `FindingLike` / `EvalDataset` / `EvalRunner` / `RagMetrics` | Ground-truth precision/recall/F1 + llm-as-judge + RAG metrics (context hit / faithfulness / relevance); named dataset regression |
 | `kit.session` / `kit.stream` | `ChatMessage` / `ChatSession` / `ChatStreams` | Multi-turn context window (count + token budget trimming); streaming (JDK Flow.Publisher) |
-| `kit.struct` | `StructuredChatModel` | Structured output: JSON Schema binding + validation-failure auto-retry (type-safe contract) |
+| `kit.struct` | `StructuredChatModel` / `JsonSchemas` / `StructuredResult` | Structured output: schema **derived from your Java type**, non-throwing result that keeps the raw response, retry feeding back the previous bad output, optional session integration |
 | `kit.mcp` | `McpClient` / `HttpMcpClient` / `McpToolAdapter` | MCP client: stdio **and** Streamable HTTP transports; tools / resources / prompts (JSON-RPC 2.0) |
 | `kit.checkpoint` | `CheckpointStore` (memory/file) | Checkpoint persistence: crash recovery / resume (also used by `AgentGraph`) |
-| `kit.obs` | `GenAiSpan` / `GenAiTracer` / `TracedChatModel` / `AggregateTracer` | Observability: GenAI spans / latency / tokens / cost, aggregated metrics export (`MetricsSink`) |
+| `kit.obs` | `GenAiSpan` / `GenAiTracer` / `TracedChatModel` / `AggregateTracer` / `TraceIdSupplier` / `TokenEstimator` | Observability: spans that carry **your** traceId, failed calls and streaming recorded too, error rate + per-operation metrics export |
 | `kit.hitl` | `ApprovalRequest` / `ApprovalGate` | Human-in-the-loop: submit approval → human decision → blocking await (also as graph interrupt) |
 | `kit.router` | `ModelRouter` / `RoutingChatModel` | Multi-model routing (priority) + automatic failover |
 | `kit.security` | `PromptInjectionDetector` / `SensitiveDataGuard` / `OutputGuardInterceptor` / `ToolSchemaValidator` | Prompt-injection detection + PII redaction (output guardrail) + tool-call argument guard, wired as `LlmInterceptor` SPI |
@@ -128,7 +128,7 @@ EvalReport report = new EvalRunner().run(dataset, case -> produceFindings(case))
 ## Testing
 
 ```bash
-mvn test   # 78 cases: loop semantics / DAG topo & cycle rejection / eval aggregation /
+mvn test   # 103 cases: loop semantics / DAG topo & cycle rejection / eval aggregation /
            # extension weaving / session trimming / structured retry / MCP full chain /
            # checkpoint restore / HITL approval / router failover / injection guard
 ```

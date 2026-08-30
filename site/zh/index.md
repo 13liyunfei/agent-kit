@@ -34,5 +34,5 @@ features:
     details: LlmInterceptor、RagEnhancer、AgentProvider、MemoryStrategy、StageHook —— 注册即生效，可覆盖默认行为。
   - icon: 📦
     title: 已发布 Maven Central
-    details: io.github.13liyunfei:agent-kit:0.1.0，GPG 签名，含 sources 与 javadoc，无需私有仓库。
+    details: io.github.13liyunfei:agent-kit:0.1.1，GPG 签名，含 sources 与 javadoc，无需私有仓库。
 ---

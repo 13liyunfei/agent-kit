@@ -19,7 +19,7 @@
 <dependency>
     <groupId>io.github.13liyunfei</groupId>
     <artifactId>agent-kit</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 </dependency>
 ```
 
@@ -37,10 +37,10 @@
 | `kit.rag` | `RagPipeline` / `TextSplitter` / `EmbeddingModel` / `VectorStore` / `Retriever` / `RagChatModel` | RAG 全链路：切分 → 向量化 → 索引 → 检索（top-k 余弦）→ RagEnhancer 重排链 → 上下文注入对话 |
 | `kit.eval` | `LlmJudge` / `FindingLike` / `EvalDataset` / `EvalRunner` / `RagMetrics` | precision/recall/F1 + llm-as-judge + RAG 指标（上下文命中 / faithfulness / relevance）；命名基准集聚合回归 |
 | `kit.session` / `kit.stream` | `ChatMessage` / `ChatSession` / `ChatStreams` | 多轮上下文窗口（条数 + token 预算裁剪）；流式（JDK Flow.Publisher） |
-| `kit.struct` | `StructuredChatModel` | 结构化输出：JSON Schema 绑定 + 校验失败自动重试（类型安全契约） |
+| `kit.struct` | `StructuredChatModel` / `JsonSchemas` / `StructuredResult` | 结构化输出：schema **由 Java 类型自动推导**；非抛出式结果（保留原始输出）；重试回灌上一次错误输出；可选会话集成 |
 | `kit.mcp` | `McpClient` / `HttpMcpClient` / `McpToolAdapter` | MCP 客户端：stdio **和** Streamable HTTP 双传输；tools / resources / prompts（JSON-RPC 2.0） |
 | `kit.checkpoint` | `CheckpointStore`（内存/文件） | 检查点持久化：崩溃恢复 / 断点续跑（也供 AgentGraph 使用） |
-| `kit.obs` | `GenAiSpan` / `GenAiTracer` / `TracedChatModel` / `AggregateTracer` | 可观测性：GenAI span / 耗时 / token / 成本，聚合指标导出（MetricsSink） |
+| `kit.obs` | `GenAiSpan` / `GenAiTracer` / `TracedChatModel` / `AggregateTracer` / `TraceIdSupplier` / `TokenEstimator` | 可观测性：span 携带**使用方自己的** traceId；失败与流式调用同样留痕；错误率 + 按操作分组的指标导出 |
 | `kit.hitl` | `ApprovalRequest` / `ApprovalGate` | 人机协作：提交审批 → 人工裁决 → 阻塞等待（亦可作为图的中断点） |
 | `kit.router` | `ModelRouter` / `RoutingChatModel` | 多模型路由（优先级）+ 调用失败自动 failover |
 | `kit.security` | `PromptInjectionDetector` / `SensitiveDataGuard` / `OutputGuardInterceptor` / `ToolSchemaValidator` | Prompt 注入检测 + 敏感数据脱敏（输出护栏）+ 工具参数校验，以 LlmInterceptor SPI 方式接入 |
@@ -127,7 +127,7 @@ EvalReport report = new EvalRunner().run(dataset, case -> produceFindings(case))
 ## 测试
 
 ```bash
-mvn -f agent-kit/pom.xml test   # 78 例：循环语义 / DAG 拓扑与环拒绝 / 评估聚合 / 扩展点织入 /
+mvn test   # 103 例：循环语义 / DAG 拓扑与环拒绝 / 评估聚合 / 扩展点织入 /
                                 # 会话裁剪 / 结构化重试 / MCP 全链路 / 检查点恢复 / HITL 审批 /
                                 # 路由 failover / 注入防护
 ```

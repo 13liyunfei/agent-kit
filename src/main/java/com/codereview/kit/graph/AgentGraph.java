@@ -107,8 +107,11 @@ public class AgentGraph {
                 String result = executeWithRetry(node, state);
                 long ms = System.currentTimeMillis() - startMs;
                 if (options.tracer() != null) {
-                    options.tracer().record(new GenAiSpan(Long.toHexString(System.nanoTime()), null,
-                            "graph.node." + name, ms, null, null, null));
+                    boolean ok = result != null && result.startsWith("ok");
+                    options.tracer().record(GenAiSpan.builder("graph.node." + name)
+                            .durationMs(ms)
+                            .error(ok ? null : (result == null ? "null" : result))
+                            .build());
                 }
                 nodeResults.put(name, result);
                 if (result.startsWith("ok")) {

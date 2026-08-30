@@ -11,24 +11,24 @@
 ## 构建命令
 
 ```bash
-# 单元测试（38 例，无需联网依赖，可 -o 离线）
+# 单元测试（103 例，无需联网依赖，可 -o 离线）
 mvn test
 
-# 打 jar 包（产出 target/agent-kit-0.1.0.jar）
+# 打 jar 包（产出 target/agent-kit-0.1.1.jar）
 mvn package
 
-# 安装到本地 Maven 仓库（~/.m2/repository/io/github/13liyunfei/agent-kit/0.1.0/）
+# 安装到本地 Maven 仓库（~/.m2/repository/io/github/13liyunfei/agent-kit/0.1.1/）
 mvn install
 
 # 跳过测试快速打包
 mvn package -DskipTests
 ```
 
-> 使用方项目在 pom.xml 引入 `io.github.13liyunfei:agent-kit:0.1.0` 前，需先执行 `mvn install` 把构件装入本地仓库（或配置私有仓库地址）。
+> 使用方项目在 pom.xml 引入 `io.github.13liyunfei:agent-kit:0.1.1` 前，需先执行 `mvn install` 把构件装入本地仓库（或配置私有仓库地址）。
 
 ## 版本约定
 
-- 当前版本：`0.1.0`（首个可复用里程碑）
+- 当前版本：`0.1.1`（结构化输出 + 追踪增强）
 - 版本号在 `pom.xml` 的 `<version>` 声明，发布时同步更新：
   - `README.md` / `README.zh-CN.md` 的引入示例
   - 组件清单如有增减，同步两份 README 的组件表
@@ -57,7 +57,7 @@ mvn deploy   # 需在 settings.xml 配置仓库认证
 
 提交前确认：
 
-- [ ] `mvn test` 全绿（38 例）
+- [ ] `mvn test` 全绿（103 例）
 - [ ] 新增组件在 `README.md`（英文）+ `README.zh-CN.md`（中文）组件表中登记
 - [ ] 新增扩展点 SPI 在两张 README 的扩展点表中登记
 - [ ] 组件包符合 `com.codereview.kit.*` 命名，仅依赖 JDK / jackson / slf4j

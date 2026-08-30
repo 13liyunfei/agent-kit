@@ -8,7 +8,7 @@
 ## Commands
 
 ```bash
-mvn test                 # run the full suite (38 tests)
+mvn test                 # run the full suite (103 tests)
 mvn package              # build the jar
 mvn install              # install to your local repository
 ```
