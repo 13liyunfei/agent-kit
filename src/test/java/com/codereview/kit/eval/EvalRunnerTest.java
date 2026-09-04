@@ -19,7 +19,7 @@ class EvalRunnerTest {
     }
 
     @Test
-    void 数据集聚合平均precision_recall_f1() {
+    void datasetAggregationAveragesPrecisionRecallF1() {
         EvalDataset ds = new EvalDataset("demo");
         ds.add(new EvalCase("c1", "目标1", List.of(new LlmJudge.GroundTruth("A.java", "硬编码"))));
         ds.add(new EvalCase("c2", "目标2", List.of(new LlmJudge.GroundTruth("B.java", "注入"))));

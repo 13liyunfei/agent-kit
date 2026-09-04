@@ -76,7 +76,7 @@ class ToolCallingLoopTest {
     }
 
     @Test
-    void 文件工具拒绝白名单外路径穿越(@TempDir Path tmp) throws Exception {
+    void fileToolRejectsTraversalOutsideWhitelist(@TempDir Path tmp) throws Exception {
         Files.writeString(tmp.resolve("ok.txt"), "hello");
         BuiltinTools.FileReadTool tool = new BuiltinTools.FileReadTool(tmp);
         assertTrue(tool.execute(java.util.Map.of("path", "ok.txt")).success());

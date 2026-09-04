@@ -27,7 +27,7 @@ class CheckpointStoreTest {
     }
 
     @Test
-    void 文件存储_跨实例恢复(@TempDir Path dir) {
+    void fileStoreRecoversAcrossInstances(@TempDir Path dir) {
         FileCheckpointStore s1 = new FileCheckpointStore(dir);
         s1.save(new Checkpoint("run-x", Map.of("completed", java.util.List.of("a", "b")), Instant.now()));
 
