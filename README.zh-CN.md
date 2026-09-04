@@ -13,6 +13,12 @@
 
 ![agent-kit 分层架构](docs/architecture.svg)
 
+### 设计取向：agent-kit vs 主流 coding-agent harness
+
+agent-kit 从 harness 家族（codex / Claude Agent SDK / deepseek-harness）借鉴了设计，因此有必要把「在哪里收敛、在哪里有意止步」讲清楚。下图沿八个设计维度（会话模型 / 断点续跑 / 编排 / 安全 / 上下文 / 工具 / 评测 / 模型绑定）做一页纸对照：前三者是**运行时**——从执行环境向下构建安全与恢复；agent-kit 是**库**——提供认知积木，把沙箱、检查点、审批分级等运行时纪律留给宿主。
+
+![设计对比：codex · Claude · deepseek-harness · agent-kit](docs/harness-comparison.svg)
+
 ## 引入
 
 ```xml

@@ -1,0 +1,135 @@
+<svg viewBox="0 0 1080 660" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI',system-ui,sans-serif">
+  <title>Design comparison · codex / Claude / deepseek-harness / agent-kit</title>
+  <desc>Eight design dimensions across four implementations: codex, Claude Agent SDK, deepseek-harness, agent-kit. The first three are runtimes (the chassis); agent-kit is an embedded library (the parts box).</desc>
+  <style>
+    text{font-family:'Segoe UI',system-ui,sans-serif}
+    .m1{font-size:10.5px;fill:#1F2328}
+    .m2{font-size:9.5px;fill:#6B7280}
+    .dl{font-size:10.5px;font-weight:500;fill:#374151}
+    .fn{font-size:9px;fill:#A8ADB5}
+  </style>
+
+  <text x="40" y="28" font-size="15" font-weight="600" fill="#2C2C2A">Design comparison · codex / Claude / deepseek-harness / agent-kit</text>
+  <text class="m2" x="40" y="46" fill="#5F5E5A">agent-kit vs. the harness family it borrows from · rows = design dimensions · columns = the four implementations (as of 2026-09)</text>
+
+  <rect x="164" y="58" width="210" height="72" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+  <rect x="164" y="58" width="5" height="72" rx="2.5" fill="#185FA5"/>
+  <text x="182" y="81" font-size="13" font-weight="600" fill="#0C447C">codex</text>
+  <text x="182" y="97" font-size="9.5" fill="#5F5E5A">OpenAI · Apache-2.0 · Rust 140+ crates</text>
+  <text x="182" y="116" font-size="9.5" fill="#0C447C">sandbox + approvals first-class</text>
+
+  <rect x="386" y="58" width="210" height="72" rx="10" fill="#FAECE7" stroke="#993C1D" stroke-width="0.5"/>
+  <rect x="386" y="58" width="5" height="72" rx="2.5" fill="#D85A30"/>
+  <text x="404" y="81" font-size="13" font-weight="600" fill="#712B13">Claude</text>
+  <text x="404" y="97" font-size="9.5" fill="#5F5E5A">Anthropic Agent SDK · TS / Python</text>
+  <text x="404" y="116" font-size="9.5" fill="#712B13">hooks + isolated subagents</text>
+
+  <rect x="608" y="58" width="210" height="72" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+  <rect x="608" y="58" width="5" height="72" rx="2.5" fill="#0F6E56"/>
+  <text x="626" y="81" font-size="13" font-weight="600" fill="#085041">deepseek-harness</text>
+  <text x="626" y="97" font-size="9.5" fill="#5F5E5A">DeepSeek · TS · Cordis plugin framework</text>
+  <text x="626" y="116" font-size="9.5" fill="#085041">replay-first · event-sourced</text>
+
+  <rect x="830" y="58" width="210" height="72" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+  <rect x="830" y="58" width="5" height="72" rx="2.5" fill="#534AB7"/>
+  <text x="848" y="81" font-size="13" font-weight="600" fill="#3C3489">agent-kit</text>
+  <text x="848" y="97" font-size="9.5" fill="#5F5E5A">self-built · pure Java 17 · 20 packages</text>
+  <text x="848" y="116" font-size="9.5" fill="#3C3489">no-runtime embedded cognition kit</text>
+
+  <text class="dl" x="50" y="168">Session model</text>
+  <text class="m1" x="178" y="167">Thread / Turn / Item</text>
+  <text class="m2" x="178" y="182">SQLite + rollout JSONL, dual layers</text>
+  <text class="m1" x="400" y="167">Session (JSONL)</text>
+  <text class="m2" x="400" y="182">resume / fork · auto compaction</text>
+  <text class="m1" x="622" y="167">Session, event-sourced</text>
+  <text class="m2" x="622" y="182">append-only immutable log</text>
+  <text class="m1" x="844" y="167">GraphState machine</text>
+  <text class="m2" x="844" y="182">budget guard · per-node retry</text>
+  <line x1="40" y1="194" x2="1040" y2="194" stroke="#E9EBEE" stroke-width="0.5"/>
+
+  <rect x="40" y="194" width="1000" height="48" fill="#FAFAF9"/>
+  <text class="dl" x="50" y="216">Resume</text>
+  <text class="m1" x="178" y="215">first-class</text>
+  <text class="m2" x="178" y="230">fork / rollback · survives restarts</text>
+  <text class="m1" x="400" y="215">resume by session_id</text>
+  <text class="m2" x="400" y="230">cross-process store is DIY</text>
+  <text class="m1" x="622" y="215">Session recoverable</text>
+  <text class="m2" x="622" y="230">built into the framework</text>
+  <text class="m1" x="844" y="215">convention, not guarantee</text>
+  <text class="m2" x="844" y="230">host saves point-by-point</text>
+  <line x1="40" y1="242" x2="1040" y2="242" stroke="#E9EBEE" stroke-width="0.5"/>
+
+  <text class="dl" x="50" y="264">Orchestration</text>
+  <text class="m1" x="178" y="263">hierarchical spawn_agent</text>
+  <text class="m2" x="178" y="278">same event bus as main loop</text>
+  <text class="m1" x="400" y="263">isolated subagents</text>
+  <text class="m2" x="400" y="278">own context · parent merges</text>
+  <text class="m1" x="622" y="263">agent-team + mailbox</text>
+  <text class="m2" x="622" y="278">at-least-once, ordered, durable</text>
+  <text class="m1" x="844" y="263">Supervisor + handoff</text>
+  <text class="m2" x="844" y="278">graph HITL interrupt</text>
+  <line x1="40" y1="290" x2="1040" y2="290" stroke="#E9EBEE" stroke-width="0.5"/>
+
+  <rect x="40" y="290" width="1000" height="48" fill="#FAFAF9"/>
+  <text class="dl" x="50" y="312">Security</text>
+  <text class="m1" x="178" y="311">OS sandbox, first-class</text>
+  <text class="m2" x="178" y="326">Seatbelt / bwrap / tiered approval</text>
+  <text class="m1" x="400" y="311">allowlist + sandbox + hooks</text>
+  <text class="m2" x="400" y="326">Deny / rewrite args · defense-in-depth</text>
+  <text class="m1" x="622" y="311">fail-closed</text>
+  <text class="m2" x="622" y="326">no sandbox = no execution</text>
+  <text class="m1" x="844" y="311">policy layer, no OS isolation</text>
+  <text class="m2" x="844" y="326">GuardedTool · injection guard</text>
+  <line x1="40" y1="338" x2="1040" y2="338" stroke="#E9EBEE" stroke-width="0.5"/>
+
+  <text class="dl" x="50" y="360">Context mgmt</text>
+  <text class="m1" x="178" y="359">results to disk, paths back</text>
+  <text class="m2" x="178" y="374">AGENTS.md standing rules</text>
+  <text class="m1" x="400" y="359">filesystem is memory</text>
+  <text class="m2" x="400" y="374">progressive disclosure · subagents</text>
+  <text class="m1" x="622" y="359">—</text>
+  <text class="m1" x="844" y="359">window / RAG / impact slices</text>
+  <text class="m2" x="844" y="374">pluggable memory strategies</text>
+  <line x1="40" y1="386" x2="1040" y2="386" stroke="#E9EBEE" stroke-width="0.5"/>
+
+  <rect x="40" y="386" width="1000" height="48" fill="#FAFAF9"/>
+  <text class="dl" x="50" y="408">Tooling</text>
+  <text class="m1" x="178" y="407">apply_patch · shell · REPL</text>
+  <text class="m2" x="178" y="422">MCP client+server · BM25 search</text>
+  <text class="m1" x="400" y="407">built-in FS / Shell / Web</text>
+  <text class="m2" x="400" y="422">@tool wraps as in-process MCP</text>
+  <text class="m1" x="622" y="407">plugin registry by name</text>
+  <text class="m2" x="622" y="422">unknown name fails fast</text>
+  <text class="m1" x="844" y="407">dual-mode tool calling</text>
+  <text class="m2" x="844" y="422">MCP client stdio / HTTP</text>
+  <line x1="40" y1="434" x2="1040" y2="434" stroke="#E9EBEE" stroke-width="0.5"/>
+
+  <text class="dl" x="50" y="456">Eval / observability</text>
+  <text class="m1" x="178" y="455">rollout replay</text>
+  <text class="m1" x="400" y="455">session JSONL auditable</text>
+  <text class="m2" x="400" y="470">evals live outside</text>
+  <text class="m1" x="622" y="455">llm-replay at the core</text>
+  <text class="m2" x="622" y="470">built for evaluation</text>
+  <text class="m1" x="844" y="455">EvalRunner + LlmJudge</text>
+  <text class="m2" x="844" y="470">regression sets · GenAiTracer</text>
+  <line x1="40" y1="482" x2="1040" y2="482" stroke="#E9EBEE" stroke-width="0.5"/>
+
+  <rect x="40" y="482" width="1000" height="48" fill="#FAFAF9"/>
+  <text class="dl" x="50" y="504">Model binding</text>
+  <text class="m1" x="178" y="503">Responses API only</text>
+  <text class="m2" x="178" y="518">pluggable providers (ollama…)</text>
+  <text class="m1" x="400" y="503">locked to Claude</text>
+  <text class="m2" x="400" y="518">Bedrock / Vertex alternative</text>
+  <text class="m1" x="622" y="503">vendor-neutral</text>
+  <text class="m2" x="622" y="518">any OpenAI-compatible model</text>
+  <text class="m1" x="844" y="503">vendor-neutral</text>
+  <text class="m2" x="844" y="518">ChatModel interface is the edge</text>
+
+  <rect x="40" y="546" width="1000" height="76" rx="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+  <text x="56" y="567" font-size="12" font-weight="600" fill="#3C3489">Takeaway · four species, two camps</text>
+  <text x="56" y="585" font-size="10.5" fill="#2C2C2A">codex / Claude / dsh are <tspan font-weight="600">runtimes (the chassis)</tspan> — safety and recovery built downward from the execution environment; agent-kit is a <tspan font-weight="600">library (the parts box)</tspan> — cognition built upward from code.</text>
+  <text x="56" y="603" font-size="10.5" fill="#2C2C2A">A Java service that wants codex-grade depth with kit-grade embeddability = kit cognition blocks + host-owned discipline (sandbox fail-closed · tiered approvals · snapshot resume · rollout trails).</text>
+
+  <text class="fn" x="40" y="646">Sources: openai/codex source analysis · Anthropic Claude Agent SDK official design · deepseek-harness line-by-line (agentic-harness-arch)</text>
+  <text class="fn" x="1040" y="646" text-anchor="end">agent-kit · 2026-09</text>
+</svg>

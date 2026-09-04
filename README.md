@@ -22,6 +22,12 @@ Build & test: see [BUILD.md](BUILD.md).
 
 ![agent-kit layered architecture](docs/architecture-en.svg)
 
+### Design stance: kit vs. the coding-agent harnesses
+
+agent-kit borrows ideas from the harness family — codex, Claude (Agent SDK) and deepseek-harness — so it helps to be explicit about where the design converges and where it deliberately stops. The one-page comparison below walks eight design dimensions (session model / resume / orchestration / security / context / tooling / eval / model binding). The first three are *runtimes*: they build safety and recovery downward from the execution environment. agent-kit is a *library*: it supplies cognition blocks and leaves runtime discipline (sandboxing, checkpointing, approval tiers) to the host.
+
+![design comparison: codex · Claude · deepseek-harness · agent-kit](docs/harness-comparison-en.svg)
+
 ## Components (17 packages / 14 capability areas)
 
 | Package | Components | Capability |
